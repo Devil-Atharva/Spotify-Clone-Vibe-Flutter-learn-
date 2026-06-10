@@ -60,13 +60,18 @@ class LibraryScreen extends StatelessWidget {
 
   /// A featured "Liked Songs" playlist card (Spotify-style purple gradient).
   Widget _likedSongsHeader(BuildContext context, List<Song> liked) {
+    final colors = context.appColors;
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
       child: InkWell(
         onTap: liked.isEmpty
             ? null
             : () {
-                context.read<PlayerProvider>().playSong(liked.first, queue: liked);
+                context.read<PlayerProvider>().playSong(
+                  liked.first,
+                  queue: liked,
+                );
                 context.read<LibraryProvider>().addRecent(liked.first);
               },
         borderRadius: BorderRadius.circular(6),
@@ -74,30 +79,30 @@ class LibraryScreen extends StatelessWidget {
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(6),
-            gradient: const LinearGradient(
+            gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [Color(0xFF4100F4), Color(0xFF9BB8FF)],
+              colors: colors.likedSongsGradient,
             ),
           ),
           child: Row(
             children: [
-              const Icon(Icons.favorite, color: AppColors.white, size: 28),
+              Icon(Icons.favorite, color: colors.text, size: 28),
               const SizedBox(width: 12),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     'Liked Songs',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: AppColors.white,
+                      color: colors.text,
                     ),
                   ),
                   Text(
                     '${liked.length} song${liked.length == 1 ? '' : 's'}',
-                    style: const TextStyle(fontSize: 12, color: Colors.white70),
+                    style: TextStyle(fontSize: 12, color: colors.mutedText),
                   ),
                 ],
               ),
@@ -106,11 +111,14 @@ class LibraryScreen extends StatelessWidget {
                 Container(
                   width: 44,
                   height: 44,
-                  decoration: const BoxDecoration(
-                    color: AppColors.spotifyGreen,
+                  decoration: BoxDecoration(
+                    color: colors.primary,
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(Icons.play_arrow, color: AppColors.black),
+                  child: Icon(
+                    Icons.play_arrow,
+                    color: colors.playerButtonForeground,
+                  ),
                 ),
             ],
           ),
@@ -141,24 +149,30 @@ class _EmptyLibrary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
+    final colors = context.appColors;
+
+    return Center(
       child: Padding(
-        padding: EdgeInsets.all(32),
+        padding: const EdgeInsets.all(32),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.library_music_outlined, size: 56, color: AppColors.lightGrey),
-            SizedBox(height: 16),
+            Icon(
+              Icons.library_music_outlined,
+              size: 56,
+              color: colors.mutedText,
+            ),
+            const SizedBox(height: 16),
             Text(
               'Songs you like will appear here',
               textAlign: TextAlign.center,
-              style: TextStyle(color: AppColors.lightGrey),
+              style: TextStyle(color: colors.mutedText),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(
               'Tap the heart on any song to save it.',
               textAlign: TextAlign.center,
-              style: TextStyle(color: AppColors.lightGrey, fontSize: 12),
+              style: TextStyle(color: colors.mutedText, fontSize: 12),
             ),
           ],
         ),

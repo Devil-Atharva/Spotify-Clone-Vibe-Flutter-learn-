@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../theme/app_theme.dart';
 import '../widgets/mini_player.dart';
+import '../widgets/themed_surfaces.dart';
 import 'home_screen.dart';
 import 'library_screen.dart';
 import 'search_screen.dart';
@@ -26,20 +27,17 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
+
     return Scaffold(
       body: IndexedStack(index: _index, children: _tabs),
       bottomNavigationBar: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           const MiniPlayer(),
-          DecoratedBox(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [Colors.transparent, AppColors.almostBlack],
-              ),
-            ),
+          AppGlassContainer(
+            radius: 0,
+            color: colors.navBackground,
             child: BottomNavigationBar(
               currentIndex: _index,
               onTap: (i) => setState(() => _index = i),

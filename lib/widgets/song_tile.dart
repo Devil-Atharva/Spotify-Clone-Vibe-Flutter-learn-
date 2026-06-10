@@ -26,6 +26,7 @@ class SongTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final player = context.watch<PlayerProvider>();
     final library = context.watch<LibraryProvider>();
+    final colors = context.appColors;
     final isCurrent = player.currentSong?.id == song.id;
     final liked = library.isLiked(song);
 
@@ -52,7 +53,7 @@ class SongTile extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w500,
-                      color: isCurrent ? AppColors.spotifyGreen : AppColors.white,
+                      color: isCurrent ? colors.primary : colors.text,
                     ),
                   ),
                   const SizedBox(height: 2),
@@ -60,27 +61,25 @@ class SongTile extends StatelessWidget {
                     song.artist,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontSize: 13,
-                      color: AppColors.lightGrey,
-                    ),
+                    style: TextStyle(fontSize: 13, color: colors.mutedText),
                   ),
                 ],
               ),
             ),
             if (!song.isPlayable)
-              const Padding(
-                padding: EdgeInsets.only(left: 8),
-                child: Icon(Icons.block, size: 18, color: AppColors.lightGrey),
+              Padding(
+                padding: const EdgeInsets.only(left: 8),
+                child: Icon(Icons.block, size: 18, color: colors.mutedText),
               ),
             if (showLike)
               IconButton(
                 icon: Icon(
                   liked ? Icons.favorite : Icons.favorite_border,
-                  color: liked ? AppColors.spotifyGreen : AppColors.lightGrey,
+                  color: liked ? colors.primary : colors.mutedText,
                   size: 20,
                 ),
-                onPressed: () => context.read<LibraryProvider>().toggleLike(song),
+                onPressed: () =>
+                    context.read<LibraryProvider>().toggleLike(song),
               ),
           ],
         ),

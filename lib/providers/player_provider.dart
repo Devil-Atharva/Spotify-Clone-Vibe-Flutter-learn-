@@ -27,25 +27,32 @@ class PlayerProvider extends ChangeNotifier {
 
   PlayerProvider() {
     _player.setReleaseMode(ReleaseMode.stop);
-    _subs.add(_player.onPlayerStateChanged.listen((state) {
-      _isPlaying = state == PlayerState.playing;
-      if (state == PlayerState.playing) _isLoading = false;
-      notifyListeners();
-    }));
-    _subs.add(_player.onPositionChanged.listen((pos) {
-      _position = pos;
-      notifyListeners();
-    }));
-    _subs.add(_player.onDurationChanged.listen((dur) {
-      _duration = dur;
-      notifyListeners();
-    }));
+    _subs.add(
+      _player.onPlayerStateChanged.listen((state) {
+        _isPlaying = state == PlayerState.playing;
+        if (state == PlayerState.playing) _isLoading = false;
+        notifyListeners();
+      }),
+    );
+    _subs.add(
+      _player.onPositionChanged.listen((pos) {
+        _position = pos;
+        notifyListeners();
+      }),
+    );
+    _subs.add(
+      _player.onDurationChanged.listen((dur) {
+        _duration = dur;
+        notifyListeners();
+      }),
+    );
     _subs.add(_player.onPlayerComplete.listen((_) => _onComplete()));
   }
 
   // ---- Getters -------------------------------------------------------------
-  Song? get currentSong =>
-      _orderPos >= 0 && _orderPos < _order.length ? _queue[_order[_orderPos]] : null;
+  Song? get currentSong => _orderPos >= 0 && _orderPos < _order.length
+      ? _queue[_order[_orderPos]]
+      : null;
   bool get isPlaying => _isPlaying;
   bool get isLoading => _isLoading;
   bool get shuffle => _shuffle;

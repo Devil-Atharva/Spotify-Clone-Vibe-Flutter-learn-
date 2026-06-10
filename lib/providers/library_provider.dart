@@ -57,10 +57,7 @@ class LibraryProvider extends ChangeNotifier {
     if (raw == null || raw.isEmpty) return [];
     try {
       final list = json.decode(raw) as List<dynamic>;
-      return list
-          .whereType<Map<String, dynamic>>()
-          .map(Song.fromJson)
-          .toList();
+      return list.whereType<Map<String, dynamic>>().map(Song.fromJson).toList();
     } catch (_) {
       return [];
     }

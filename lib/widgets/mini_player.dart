@@ -6,6 +6,7 @@ import '../providers/player_provider.dart';
 import '../screens/now_playing_screen.dart';
 import '../theme/app_theme.dart';
 import 'artwork.dart';
+import 'themed_surfaces.dart';
 
 /// Compact player docked above the bottom nav bar.
 class MiniPlayer extends StatelessWidget {
@@ -18,6 +19,7 @@ class MiniPlayer extends StatelessWidget {
     if (song == null) return const SizedBox.shrink();
 
     final library = context.watch<LibraryProvider>();
+    final colors = context.appColors;
     final liked = library.isLiked(song);
 
     return GestureDetector(
@@ -26,18 +28,16 @@ class MiniPlayer extends StatelessWidget {
           transitionDuration: const Duration(milliseconds: 350),
           pageBuilder: (_, _, _) => const NowPlayingScreen(),
           transitionsBuilder: (_, anim, _, child) => SlideTransition(
-            position: Tween(begin: const Offset(0, 1), end: Offset.zero)
-                .animate(CurvedAnimation(parent: anim, curve: Curves.easeOut)),
+            position: Tween(
+              begin: const Offset(0, 1),
+              end: Offset.zero,
+            ).animate(CurvedAnimation(parent: anim, curve: Curves.easeOut)),
             child: child,
           ),
         ),
       ),
-      child: Container(
+      child: AppGlassContainer(
         margin: const EdgeInsets.symmetric(horizontal: 8),
-        decoration: BoxDecoration(
-          color: AppColors.cardGrey,
-          borderRadius: BorderRadius.circular(8),
-        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -58,20 +58,17 @@ class MiniPlayer extends StatelessWidget {
                         song.title,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
-                          color: AppColors.white,
+                          color: colors.text,
                         ),
                       ),
                       Text(
                         song.artist,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          fontSize: 11,
-                          color: AppColors.lightGrey,
-                        ),
+                        style: TextStyle(fontSize: 11, color: colors.mutedText),
                       ),
                     ],
                   ),
@@ -79,26 +76,24 @@ class MiniPlayer extends StatelessWidget {
                 IconButton(
                   icon: Icon(
                     liked ? Icons.favorite : Icons.favorite_border,
-                    color: liked ? AppColors.spotifyGreen : AppColors.white,
+                    color: liked ? colors.primary : colors.text,
                   ),
                   onPressed: () =>
                       context.read<LibraryProvider>().toggleLike(song),
                 ),
                 IconButton(
                   icon: player.isLoading
-                      ? const SizedBox(
+                      ? SizedBox(
                           width: 20,
                           height: 20,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            color: AppColors.white,
+                            color: colors.text,
                           ),
                         )
                       : Icon(
-                          player.isPlaying
-                              ? Icons.pause
-                              : Icons.play_arrow,
-                          color: AppColors.white,
+                          player.isPlaying ? Icons.pause : Icons.play_arrow,
+                          color: colors.text,
                           size: 28,
                         ),
                   onPressed: () =>
@@ -115,8 +110,8 @@ class MiniPlayer extends StatelessWidget {
                 child: LinearProgressIndicator(
                   value: player.progress,
                   minHeight: 2,
-                  backgroundColor: Colors.white24,
-                  valueColor: const AlwaysStoppedAnimation(AppColors.white),
+                  backgroundColor: colors.progressTrack,
+                  valueColor: AlwaysStoppedAnimation(colors.text),
                 ),
               ),
             ),

@@ -6,6 +6,7 @@ import '../providers/library_provider.dart';
 import '../providers/player_provider.dart';
 import '../theme/app_theme.dart';
 import '../widgets/artwork.dart';
+import '../widgets/themed_surfaces.dart';
 
 /// Full-screen "Now Playing" view with full transport controls.
 class NowPlayingScreen extends StatelessWidget {
@@ -21,6 +22,7 @@ class NowPlayingScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final player = context.watch<PlayerProvider>();
     final song = player.currentSong;
+    final colors = context.appColors;
 
     if (song == null) {
       return const Scaffold(body: Center(child: Text('Nothing playing')));
@@ -28,11 +30,11 @@ class NowPlayingScreen extends StatelessWidget {
 
     return Scaffold(
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Color(0xFF3A3A3A), AppColors.black],
+            colors: colors.nowPlayingGradient,
           ),
         ),
         child: SafeArea(
@@ -66,6 +68,8 @@ class NowPlayingScreen extends StatelessWidget {
   }
 
   Widget _topBar(BuildContext context, Song song) {
+    final colors = context.appColors;
+
     return Row(
       children: [
         IconButton(
@@ -75,12 +79,12 @@ class NowPlayingScreen extends StatelessWidget {
         const Spacer(),
         Column(
           children: [
-            const Text(
+            Text(
               'PLAYING FROM PREVIEW',
               style: TextStyle(
                 fontSize: 10,
                 letterSpacing: 1.2,
-                color: AppColors.lightGrey,
+                color: colors.mutedText,
               ),
             ),
             const SizedBox(height: 2),
@@ -100,6 +104,7 @@ class NowPlayingScreen extends StatelessWidget {
 
   Widget _titleRow(BuildContext context, Song song) {
     final library = context.watch<LibraryProvider>();
+    final colors = context.appColors;
     final liked = library.isLiked(song);
     return Row(
       children: [
@@ -121,10 +126,7 @@ class NowPlayingScreen extends StatelessWidget {
                 song.artist,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  fontSize: 15,
-                  color: AppColors.lightGrey,
-                ),
+                style: TextStyle(fontSize: 15, color: colors.mutedText),
               ),
             ],
           ),
@@ -133,7 +135,7 @@ class NowPlayingScreen extends StatelessWidget {
           iconSize: 30,
           icon: Icon(
             liked ? Icons.favorite : Icons.favorite_border,
-            color: liked ? AppColors.spotifyGreen : AppColors.white,
+            color: liked ? colors.primary : colors.text,
           ),
           onPressed: () => context.read<LibraryProvider>().toggleLike(song),
         ),
@@ -142,6 +144,7 @@ class NowPlayingScreen extends StatelessWidget {
   }
 
   Widget _seekBar(BuildContext context, PlayerProvider player) {
+    final colors = context.appColors;
     final total = player.duration;
     final pos = player.position > total ? total : player.position;
     return Column(
@@ -163,17 +166,11 @@ class NowPlayingScreen extends StatelessWidget {
             children: [
               Text(
                 _fmt(pos),
-                style: const TextStyle(
-                  fontSize: 11,
-                  color: AppColors.lightGrey,
-                ),
+                style: TextStyle(fontSize: 11, color: colors.mutedText),
               ),
               Text(
                 _fmt(total),
-                style: const TextStyle(
-                  fontSize: 11,
-                  color: AppColors.lightGrey,
-                ),
+                style: TextStyle(fontSize: 11, color: colors.mutedText),
               ),
             ],
           ),
@@ -184,67 +181,79 @@ class NowPlayingScreen extends StatelessWidget {
 
   Widget _controls(BuildContext context, PlayerProvider player) {
     final read = context.read<PlayerProvider>();
+    final colors = context.appColors;
     return Padding(
       padding: const EdgeInsets.only(top: 8),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          IconButton(
-            iconSize: 26,
-            icon: Icon(
-              Icons.shuffle,
-              color: player.shuffle
-                  ? AppColors.spotifyGreen
-                  : AppColors.lightGrey,
-            ),
-            onPressed: read.toggleShuffle,
-          ),
-          IconButton(
-            iconSize: 40,
-            icon: const Icon(Icons.skip_previous),
-            onPressed: read.previous,
-          ),
-          // Play / pause big button.
-          GestureDetector(
-            onTap: read.togglePlayPause,
-            child: Container(
-              width: 68,
-              height: 68,
-              decoration: const BoxDecoration(
-                color: AppColors.white,
-                shape: BoxShape.circle,
+      child: AppGlassContainer(
+        radius: 28,
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            IconButton(
+              iconSize: 26,
+              icon: Icon(
+                Icons.shuffle,
+                color: player.shuffle ? colors.primary : colors.mutedText,
               ),
-              child: player.isLoading
-                  ? const Padding(
-                      padding: EdgeInsets.all(22),
-                      child: CircularProgressIndicator(
-                        strokeWidth: 3,
-                        color: AppColors.black,
-                      ),
-                    )
-                  : Icon(
-                      player.isPlaying ? Icons.pause : Icons.play_arrow,
-                      color: AppColors.black,
-                      size: 40,
+              onPressed: read.toggleShuffle,
+            ),
+            IconButton(
+              iconSize: 40,
+              icon: const Icon(Icons.skip_previous),
+              onPressed: read.previous,
+            ),
+            // Play / pause big button.
+            GestureDetector(
+              onTap: read.togglePlayPause,
+              child: Container(
+                width: 68,
+                height: 68,
+                decoration: BoxDecoration(
+                  color: colors.playerButtonBackground,
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: colors.primary.withAlpha(70),
+                      blurRadius: 24,
+                      offset: const Offset(0, 8),
                     ),
+                  ],
+                ),
+                child: player.isLoading
+                    ? Padding(
+                        padding: const EdgeInsets.all(22),
+                        child: CircularProgressIndicator(
+                          strokeWidth: 3,
+                          color: colors.playerButtonForeground,
+                        ),
+                      )
+                    : Icon(
+                        player.isPlaying ? Icons.pause : Icons.play_arrow,
+                        color: colors.playerButtonForeground,
+                        size: 40,
+                      ),
+              ),
             ),
-          ),
-          IconButton(
-            iconSize: 40,
-            icon: const Icon(Icons.skip_next),
-            onPressed: () => read.next(),
-          ),
-          IconButton(
-            iconSize: 26,
-            icon: Icon(
-              player.repeat == RepeatMode.one ? Icons.repeat_one : Icons.repeat,
-              color: player.repeat == RepeatMode.off
-                  ? AppColors.lightGrey
-                  : AppColors.spotifyGreen,
+            IconButton(
+              iconSize: 40,
+              icon: const Icon(Icons.skip_next),
+              onPressed: () => read.next(),
             ),
-            onPressed: read.cycleRepeat,
-          ),
-        ],
+            IconButton(
+              iconSize: 26,
+              icon: Icon(
+                player.repeat == RepeatMode.one
+                    ? Icons.repeat_one
+                    : Icons.repeat,
+                color: player.repeat == RepeatMode.off
+                    ? colors.mutedText
+                    : colors.primary,
+              ),
+              onPressed: read.cycleRepeat,
+            ),
+          ],
+        ),
       ),
     );
   }

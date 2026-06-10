@@ -97,6 +97,8 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   Widget _searchField() {
+    final colors = context.appColors;
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
       child: Column(
@@ -112,14 +114,19 @@ class _SearchScreenState extends State<SearchScreen> {
             onChanged: _onChanged,
             textInputAction: TextInputAction.search,
             onSubmitted: _search,
-            style: const TextStyle(color: AppColors.black, fontWeight: FontWeight.w500),
+            style: TextStyle(
+              color: colors.searchFieldText,
+              fontWeight: FontWeight.w500,
+            ),
             decoration: InputDecoration(
               hintText: 'Artists, songs, or albums',
-              hintStyle: const TextStyle(color: Colors.black54),
-              prefixIcon: const Icon(Icons.search, color: AppColors.black),
+              hintStyle: TextStyle(
+                color: colors.searchFieldText.withAlpha(138),
+              ),
+              prefixIcon: Icon(Icons.search, color: colors.searchFieldText),
               suffixIcon: _controller.text.isNotEmpty
                   ? IconButton(
-                      icon: const Icon(Icons.clear, color: AppColors.black),
+                      icon: Icon(Icons.clear, color: colors.searchFieldText),
                       onPressed: () {
                         _controller.clear();
                         _search('');
@@ -127,7 +134,7 @@ class _SearchScreenState extends State<SearchScreen> {
                     )
                   : null,
               filled: true,
-              fillColor: AppColors.white,
+              fillColor: colors.searchFieldBackground,
               contentPadding: const EdgeInsets.symmetric(vertical: 4),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(6),
@@ -141,14 +148,14 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   Widget _body() {
+    final colors = context.appColors;
+
     if (_loading) {
-      return const Center(
-        child: CircularProgressIndicator(color: AppColors.spotifyGreen),
-      );
+      return Center(child: CircularProgressIndicator(color: colors.primary));
     }
     if (_error != null) {
       return Center(
-        child: Text(_error!, style: const TextStyle(color: AppColors.lightGrey)),
+        child: Text(_error!, style: TextStyle(color: colors.mutedText)),
       );
     }
     if (_lastQuery.isEmpty) {
@@ -158,7 +165,7 @@ class _SearchScreenState extends State<SearchScreen> {
       return Center(
         child: Text(
           'No results for "$_lastQuery"',
-          style: const TextStyle(color: AppColors.lightGrey),
+          style: TextStyle(color: colors.mutedText),
         ),
       );
     }
@@ -170,6 +177,8 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   Widget _browseGrid() {
+    final colors = context.appColors;
+
     return ListView(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
       children: [
@@ -201,10 +210,10 @@ class _SearchScreenState extends State<SearchScreen> {
                 ),
                 child: Text(
                   g.$1,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.white,
+                    color: colors.text,
                   ),
                 ),
               ),

@@ -18,12 +18,14 @@ class MusicApi {
   /// Search songs by free-text query.
   Future<List<Song>> searchSongs(String query, {int limit = 30}) async {
     if (query.trim().isEmpty) return [];
-    final uri = Uri.parse('$_base/search').replace(queryParameters: {
-      'term': query,
-      'media': 'music',
-      'entity': 'song',
-      'limit': '$limit',
-    });
+    final uri = Uri.parse('$_base/search').replace(
+      queryParameters: {
+        'term': query,
+        'media': 'music',
+        'entity': 'song',
+        'limit': '$limit',
+      },
+    );
     return _fetchSongs(uri);
   }
 

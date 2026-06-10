@@ -21,26 +21,30 @@ class Artwork extends StatelessWidget {
     return ClipRRect(
       borderRadius: BorderRadius.circular(radius),
       child: url.isEmpty
-          ? _placeholder()
+          ? _placeholder(context)
           : CachedNetworkImage(
               imageUrl: url,
               width: size,
               height: size,
               fit: BoxFit.cover,
-              placeholder: (_, _) => _placeholder(),
-              errorWidget: (_, _, _) => _placeholder(),
+              placeholder: (_, _) => _placeholder(context),
+              errorWidget: (_, _, _) => _placeholder(context),
             ),
     );
   }
 
-  Widget _placeholder() => Container(
-        width: size,
-        height: size,
-        color: AppColors.cardGrey,
-        child: Icon(
-          Icons.music_note_rounded,
-          color: AppColors.lightGrey,
-          size: size * 0.4,
-        ),
-      );
+  Widget _placeholder(BuildContext context) {
+    final colors = context.appColors;
+
+    return Container(
+      width: size,
+      height: size,
+      color: colors.card,
+      child: Icon(
+        Icons.music_note_rounded,
+        color: colors.mutedText,
+        size: size * 0.4,
+      ),
+    );
+  }
 }

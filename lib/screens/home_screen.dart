@@ -7,6 +7,8 @@ import '../providers/player_provider.dart';
 import '../services/music_api.dart';
 import '../theme/app_theme.dart';
 import '../widgets/artwork.dart';
+import '../widgets/themed_surfaces.dart';
+import 'settings_screen.dart';
 
 /// A curated home feed assembled from several iTunes search "themes".
 class HomeScreen extends StatefulWidget {
@@ -71,45 +73,46 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
+
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: AppColors.headerGradient,
+          colors: colors.headerGradient,
           stops: [0.0, 0.35],
         ),
       ),
       child: SafeArea(
         bottom: false,
         child: RefreshIndicator(
-          color: AppColors.spotifyGreen,
-          backgroundColor: AppColors.cardGrey,
+          color: colors.primary,
+          backgroundColor: colors.card,
           onRefresh: _refresh,
           child: FutureBuilder<List<(String, List<Song>)>>(
             future: _future,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(
-                  child: CircularProgressIndicator(color: AppColors.spotifyGreen),
+                return Center(
+                  child: CircularProgressIndicator(color: colors.primary),
                 );
               }
               if (snapshot.hasError) {
-                return _errorView();
+                return _errorView(context);
               }
               final sections = snapshot.data ?? [];
               if (sections.isEmpty) {
-                return _errorView();
+                return _errorView(context);
               }
               return ListView(
                 padding: const EdgeInsets.only(bottom: 24),
                 children: [
-                  _header(),
+                  _header(context),
                   _recentlyPlayed(),
-                  ...sections.map((s) => _CarouselSection(
-                        title: s.$1,
-                        songs: s.$2,
-                      )),
+                  ...sections.map(
+                    (s) => _CarouselSection(title: s.$1, songs: s.$2),
+                  ),
                 ],
               );
             },
@@ -119,17 +122,19 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _errorView() {
+  Widget _errorView(BuildContext context) {
+    final colors = context.appColors;
+
     return ListView(
       children: [
         const SizedBox(height: 160),
-        const Icon(Icons.wifi_off, size: 48, color: AppColors.lightGrey),
+        Icon(Icons.wifi_off, size: 48, color: colors.mutedText),
         const SizedBox(height: 16),
-        const Center(
+        Center(
           child: Text(
             'Could not load music.\nCheck your connection and pull to retry.',
             textAlign: TextAlign.center,
-            style: TextStyle(color: AppColors.lightGrey),
+            style: TextStyle(color: colors.mutedText),
           ),
         ),
         const SizedBox(height: 16),
@@ -143,24 +148,30 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _header() {
+  Widget _header(BuildContext context) {
+    final colors = context.appColors;
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
       child: Row(
         children: [
           Text(
             _greeting(),
-            style: const TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-            ),
+            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
           const Spacer(),
-          const Icon(Icons.notifications_none),
+          Icon(Icons.notifications_none, color: colors.text),
           const SizedBox(width: 16),
-          const Icon(Icons.history),
+          Icon(Icons.history, color: colors.text),
           const SizedBox(width: 16),
-          const Icon(Icons.settings_outlined),
+          IconButton(
+            icon: Icon(Icons.settings_outlined, color: colors.text),
+            onPressed: () {
+              Navigator.of(
+                context,
+              ).push(MaterialPageRoute(builder: (_) => const SettingsScreen()));
+            },
+          ),
         ],
       ),
     );
@@ -194,31 +205,36 @@ class _RecentChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Colors.white10,
-      borderRadius: BorderRadius.circular(4),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(4),
-        onTap: () {
-          context.read<PlayerProvider>().playSong(song, queue: queue);
-          context.read<LibraryProvider>().addRecent(song);
-        },
-        child: Row(
-          children: [
-            Artwork(url: song.artworkUrl, size: 48, radius: 4),
-            const SizedBox(width: 8),
-            Expanded(
-              child: Text(
-                song.title,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
+    final colors = context.appColors;
+
+    return AppGlassContainer(
+      radius: 4,
+      color: colors.elevated,
+      child: Material(
+        type: MaterialType.transparency,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(4),
+          onTap: () {
+            context.read<PlayerProvider>().playSong(song, queue: queue);
+            context.read<LibraryProvider>().addRecent(song);
+          },
+          child: Row(
+            children: [
+              Artwork(url: song.artworkUrl, size: 48, radius: 4),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  song.title,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -267,6 +283,8 @@ class _AlbumCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
+
     return GestureDetector(
       onTap: () {
         context.read<PlayerProvider>().playSong(song, queue: queue);
@@ -290,7 +308,7 @@ class _AlbumCard extends StatelessWidget {
               song.artist,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(fontSize: 12, color: AppColors.lightGrey),
+              style: TextStyle(fontSize: 12, color: colors.mutedText),
             ),
           ],
         ),

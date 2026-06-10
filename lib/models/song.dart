@@ -39,15 +39,15 @@ class Song {
   }
 
   Map<String, dynamic> toJson() => {
-        'trackId': id,
-        'trackName': title,
-        'artistName': artist,
-        'collectionName': album,
-        'artworkUrl100': artworkUrl,
-        'previewUrl': previewUrl,
-        'trackTimeMillis': duration.inMilliseconds,
-        'primaryGenreName': genre,
-      };
+    'trackId': id,
+    'trackName': title,
+    'artistName': artist,
+    'collectionName': album,
+    'artworkUrl100': artworkUrl,
+    'previewUrl': previewUrl,
+    'trackTimeMillis': duration.inMilliseconds,
+    'primaryGenreName': genre,
+  };
 
   bool get isPlayable => previewUrl.isNotEmpty;
 
