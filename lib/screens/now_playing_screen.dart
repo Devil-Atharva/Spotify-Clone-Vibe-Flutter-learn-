@@ -54,7 +54,14 @@ class NowPlayingScreen extends StatelessWidget {
                   ),
                 ),
                 const Spacer(),
-                _titleRow(context, song),
+                AppGlassContainer(
+                  radius: 28,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 18,
+                    vertical: 16,
+                  ),
+                  child: _titleRow(context, song),
+                ),
                 const SizedBox(height: 16),
                 _seekBar(context, player),
                 _controls(context, player),
@@ -147,35 +154,39 @@ class NowPlayingScreen extends StatelessWidget {
     final colors = context.appColors;
     final total = player.duration;
     final pos = player.position > total ? total : player.position;
-    return Column(
-      children: [
-        Slider(
-          value: pos.inMilliseconds.toDouble().clamp(
-            0,
-            total.inMilliseconds.toDouble(),
+    return AppGlassContainer(
+      radius: 24,
+      padding: const EdgeInsets.fromLTRB(8, 8, 8, 12),
+      child: Column(
+        children: [
+          Slider(
+            value: pos.inMilliseconds.toDouble().clamp(
+              0,
+              total.inMilliseconds.toDouble(),
+            ),
+            max: total.inMilliseconds.toDouble().clamp(1, double.infinity),
+            onChanged: (v) => context.read<PlayerProvider>().seek(
+              Duration(milliseconds: v.toInt()),
+            ),
           ),
-          max: total.inMilliseconds.toDouble().clamp(1, double.infinity),
-          onChanged: (v) => context.read<PlayerProvider>().seek(
-            Duration(milliseconds: v.toInt()),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  _fmt(pos),
+                  style: TextStyle(fontSize: 11, color: colors.mutedText),
+                ),
+                Text(
+                  _fmt(total),
+                  style: TextStyle(fontSize: 11, color: colors.mutedText),
+                ),
+              ],
+            ),
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                _fmt(pos),
-                style: TextStyle(fontSize: 11, color: colors.mutedText),
-              ),
-              Text(
-                _fmt(total),
-                style: TextStyle(fontSize: 11, color: colors.mutedText),
-              ),
-            ],
-          ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 

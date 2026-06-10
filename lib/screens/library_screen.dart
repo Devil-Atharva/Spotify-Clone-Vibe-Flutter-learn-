@@ -6,6 +6,7 @@ import '../providers/library_provider.dart';
 import '../providers/player_provider.dart';
 import '../theme/app_theme.dart';
 import '../widgets/song_tile.dart';
+import '../widgets/themed_surfaces.dart';
 
 class LibraryScreen extends StatelessWidget {
   const LibraryScreen({super.key});
@@ -64,63 +65,70 @@ class LibraryScreen extends StatelessWidget {
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-      child: InkWell(
-        onTap: liked.isEmpty
-            ? null
-            : () {
-                context.read<PlayerProvider>().playSong(
-                  liked.first,
-                  queue: liked,
-                );
-                context.read<LibraryProvider>().addRecent(liked.first);
-              },
-        borderRadius: BorderRadius.circular(6),
-        child: Container(
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(6),
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: colors.likedSongsGradient,
+      child: AppGlassContainer(
+        radius: 24,
+        color: Color.alphaBlend(
+          colors.likedSongsGradient.first.withAlpha(96),
+          colors.glassSurface,
+        ),
+        child: InkWell(
+          onTap: liked.isEmpty
+              ? null
+              : () {
+                  context.read<PlayerProvider>().playSong(
+                    liked.first,
+                    queue: liked,
+                  );
+                  context.read<LibraryProvider>().addRecent(liked.first);
+                },
+          borderRadius: BorderRadius.circular(24),
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(24),
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: colors.likedSongsGradient,
+              ),
             ),
-          ),
-          child: Row(
-            children: [
-              Icon(Icons.favorite, color: colors.text, size: 28),
-              const SizedBox(width: 12),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Liked Songs',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: colors.text,
+            child: Row(
+              children: [
+                Icon(Icons.favorite, color: colors.text, size: 28),
+                const SizedBox(width: 12),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Liked Songs',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: colors.text,
+                      ),
+                    ),
+                    Text(
+                      '${liked.length} song${liked.length == 1 ? '' : 's'}',
+                      style: TextStyle(fontSize: 12, color: colors.mutedText),
+                    ),
+                  ],
+                ),
+                const Spacer(),
+                if (liked.isNotEmpty)
+                  Container(
+                    width: 44,
+                    height: 44,
+                    decoration: BoxDecoration(
+                      color: colors.playerButtonBackground,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.play_arrow,
+                      color: colors.playerButtonForeground,
                     ),
                   ),
-                  Text(
-                    '${liked.length} song${liked.length == 1 ? '' : 's'}',
-                    style: TextStyle(fontSize: 12, color: colors.mutedText),
-                  ),
-                ],
-              ),
-              const Spacer(),
-              if (liked.isNotEmpty)
-                Container(
-                  width: 44,
-                  height: 44,
-                  decoration: BoxDecoration(
-                    color: colors.primary,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    Icons.play_arrow,
-                    color: colors.playerButtonForeground,
-                  ),
-                ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -154,27 +162,32 @@ class _EmptyLibrary extends StatelessWidget {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.library_music_outlined,
-              size: 56,
-              color: colors.mutedText,
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'Songs you like will appear here',
-              textAlign: TextAlign.center,
-              style: TextStyle(color: colors.mutedText),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Tap the heart on any song to save it.',
-              textAlign: TextAlign.center,
-              style: TextStyle(color: colors.mutedText, fontSize: 12),
-            ),
-          ],
+        child: AppGlassContainer(
+          radius: 28,
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.library_music_outlined,
+                size: 56,
+                color: colors.mutedText,
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Songs you like will appear here',
+                textAlign: TextAlign.center,
+                style: TextStyle(color: colors.mutedText),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Tap the heart on any song to save it.',
+                textAlign: TextAlign.center,
+                style: TextStyle(color: colors.mutedText, fontSize: 12),
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -107,11 +107,32 @@ class MiniPlayer extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 8),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(2),
-                child: LinearProgressIndicator(
-                  value: player.progress,
-                  minHeight: 2,
-                  backgroundColor: colors.progressTrack,
-                  valueColor: AlwaysStoppedAnimation(colors.text),
+                child: SizedBox(
+                  height: 2,
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      ColoredBox(color: colors.progressTrack),
+                      if (colors.progressGradient != null)
+                        FractionallySizedBox(
+                          alignment: Alignment.centerLeft,
+                          widthFactor: player.progress,
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: colors.progressGradient!,
+                              ),
+                            ),
+                          ),
+                        )
+                      else
+                        FractionallySizedBox(
+                          alignment: Alignment.centerLeft,
+                          widthFactor: player.progress,
+                          child: ColoredBox(color: colors.text),
+                        ),
+                    ],
+                  ),
                 ),
               ),
             ),

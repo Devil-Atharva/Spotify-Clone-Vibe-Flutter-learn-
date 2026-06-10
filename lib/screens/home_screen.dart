@@ -153,26 +153,31 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-      child: Row(
-        children: [
-          Text(
-            _greeting(),
-            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
-          const Spacer(),
-          Icon(Icons.notifications_none, color: colors.text),
-          const SizedBox(width: 16),
-          Icon(Icons.history, color: colors.text),
-          const SizedBox(width: 16),
-          IconButton(
-            icon: Icon(Icons.settings_outlined, color: colors.text),
-            onPressed: () {
-              Navigator.of(
-                context,
-              ).push(MaterialPageRoute(builder: (_) => const SettingsScreen()));
-            },
-          ),
-        ],
+      child: AppGlassContainer(
+        radius: 24,
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+        child: Row(
+          children: [
+            Text(
+              _greeting(),
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+            const Spacer(),
+            Icon(Icons.notifications_none, color: colors.text),
+            const SizedBox(width: 16),
+            Icon(Icons.history, color: colors.text),
+            const SizedBox(width: 12),
+            IconButton(
+              visualDensity: VisualDensity.compact,
+              icon: Icon(Icons.settings_outlined, color: colors.text),
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const SettingsScreen()),
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -290,27 +295,34 @@ class _AlbumCard extends StatelessWidget {
         context.read<PlayerProvider>().playSong(song, queue: queue);
         context.read<LibraryProvider>().addRecent(song);
       },
-      child: Container(
+      child: SizedBox(
         width: 150,
-        margin: const EdgeInsets.symmetric(horizontal: 4),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Artwork(url: song.artworkHighRes(300), size: 150, radius: 8),
-            const SizedBox(height: 8),
-            Text(
-              song.title,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
-            ),
-            Text(
-              song.artist,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(fontSize: 12, color: colors.mutedText),
-            ),
-          ],
+        child: AppGlassContainer(
+          radius: 20,
+          margin: const EdgeInsets.symmetric(horizontal: 4),
+          padding: const EdgeInsets.all(8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Artwork(url: song.artworkHighRes(300), size: 140, radius: 8),
+              const SizedBox(height: 6),
+              Text(
+                song.title,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              Text(
+                song.artist,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(fontSize: 11, color: colors.mutedText),
+              ),
+            ],
+          ),
         ),
       ),
     );

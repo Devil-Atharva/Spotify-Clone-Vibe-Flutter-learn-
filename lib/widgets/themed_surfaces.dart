@@ -14,15 +14,15 @@ class ThemedBackground extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.appColors;
 
-    final overlayBrightness =
-        colors.hasWallpaper ? Brightness.dark : Brightness.light;
-
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
-        statusBarIconBrightness: overlayBrightness,
+        statusBarIconBrightness: colors.systemOverlayIconBrightness,
+        statusBarBrightness: colors.statusBarBrightness,
         systemNavigationBarColor: colors.navBackground,
-        systemNavigationBarIconBrightness: overlayBrightness,
+        systemNavigationBarIconBrightness: colors.navigationBarIconBrightness,
+        systemNavigationBarDividerColor: Colors.transparent,
+        systemNavigationBarContrastEnforced: false,
       ),
       child: ColoredBox(
         color: colors.background,
@@ -30,7 +30,9 @@ class ThemedBackground extends StatelessWidget {
           fit: StackFit.expand,
           children: [
             if (colors.wallpaperAsset != null)
-              Image.asset(colors.wallpaperAsset!, fit: BoxFit.cover),
+              RepaintBoundary(
+                child: Image.asset(colors.wallpaperAsset!, fit: BoxFit.cover),
+              ),
             if (colors.wallpaperAsset != null)
               BackdropFilter(
                 filter: ImageFilter.blur(
@@ -76,10 +78,7 @@ class AppGlassContainer extends StatelessWidget {
         borderRadius: borderRadius,
         border: border ?? Border.all(color: colors.glassOutline),
       ),
-      child: Padding(
-        padding: padding ?? EdgeInsets.zero,
-        child: child,
-      ),
+      child: Padding(padding: padding ?? EdgeInsets.zero, child: child),
     );
 
     final clippedSurface = ClipRRect(
@@ -97,9 +96,6 @@ class AppGlassContainer extends StatelessWidget {
 
     if (margin == null) return clippedSurface;
 
-    return Padding(
-      padding: margin!,
-      child: clippedSurface,
-    );
+    return Padding(padding: margin!, child: clippedSurface);
   }
 }

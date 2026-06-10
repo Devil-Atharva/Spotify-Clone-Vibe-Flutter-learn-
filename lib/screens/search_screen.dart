@@ -6,6 +6,7 @@ import '../models/song.dart';
 import '../services/music_api.dart';
 import '../theme/app_theme.dart';
 import '../widgets/song_tile.dart';
+import '../widgets/themed_surfaces.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -49,6 +50,7 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   void _onChanged(String value) {
+    setState(() {});
     _debounce?.cancel();
     _debounce = Timer(const Duration(milliseconds: 450), () => _search(value));
   }
@@ -109,36 +111,30 @@ class _SearchScreenState extends State<SearchScreen> {
             style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 12),
-          TextField(
-            controller: _controller,
-            onChanged: _onChanged,
-            textInputAction: TextInputAction.search,
-            onSubmitted: _search,
-            style: TextStyle(
-              color: colors.searchFieldText,
-              fontWeight: FontWeight.w500,
-            ),
-            decoration: InputDecoration(
-              hintText: 'Artists, songs, or albums',
-              hintStyle: TextStyle(
-                color: colors.searchFieldText.withAlpha(138),
+          AppGlassContainer(
+            radius: 18,
+            child: TextField(
+              controller: _controller,
+              onChanged: _onChanged,
+              textInputAction: TextInputAction.search,
+              onSubmitted: _search,
+              style: TextStyle(
+                color: colors.searchFieldText,
+                fontWeight: FontWeight.w500,
               ),
-              prefixIcon: Icon(Icons.search, color: colors.searchFieldText),
-              suffixIcon: _controller.text.isNotEmpty
-                  ? IconButton(
-                      icon: Icon(Icons.clear, color: colors.searchFieldText),
-                      onPressed: () {
-                        _controller.clear();
-                        _search('');
-                      },
-                    )
-                  : null,
-              filled: true,
-              fillColor: colors.searchFieldBackground,
-              contentPadding: const EdgeInsets.symmetric(vertical: 4),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(6),
-                borderSide: BorderSide.none,
+              decoration: InputDecoration(
+                hintText: 'Artists, songs, or albums',
+                prefixIcon: const Icon(Icons.search),
+                suffixIcon: _controller.text.isNotEmpty
+                    ? IconButton(
+                        icon: const Icon(Icons.clear),
+                        onPressed: () {
+                          setState(() => _controller.clear());
+                          _search('');
+                        },
+                      )
+                    : null,
+                contentPadding: const EdgeInsets.symmetric(vertical: 4),
               ),
             ),
           ),
@@ -199,21 +195,28 @@ class _SearchScreenState extends State<SearchScreen> {
           children: _genres.map((g) {
             return GestureDetector(
               onTap: () {
-                _controller.text = g.$1;
+                setState(() => _controller.text = g.$1);
                 _search(g.$1);
               },
-              child: Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: g.$2,
-                  borderRadius: BorderRadius.circular(8),
+              child: AppGlassContainer(
+                radius: 18,
+                color: Color.alphaBlend(
+                  g.$2.withAlpha(140),
+                  colors.glassSurface,
                 ),
-                child: Text(
-                  g.$1,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: colors.text,
+                child: Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(18),
+                    border: Border.all(color: colors.glassOutline),
+                  ),
+                  child: Text(
+                    g.$1,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: colors.text,
+                    ),
                   ),
                 ),
               ),
