@@ -72,11 +72,11 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets/images/prayag_wallpaper.png
-    - assets/images/sagar_wallpaper.png
-    - assets/images/vaibhav_wallpaper.png
-    - assets/images/shivli_wallpaper.png
-    - assets/images/monga_wallpaper.png
+    - assets/wallpapers/prayag.jpg
+    - assets/wallpapers/sagar.jpg
+    - assets/wallpapers/vaibhav.jpg
+    - assets/wallpapers/shivli.jpg
+    - assets/wallpapers/monga.jpg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

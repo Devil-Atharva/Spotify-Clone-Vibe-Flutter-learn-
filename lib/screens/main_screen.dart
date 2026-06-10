@@ -36,8 +36,21 @@ class _MainScreenState extends State<MainScreen> {
         children: [
           const MiniPlayer(),
           AppGlassContainer(
-            radius: 0,
+            radius: switch (colors.personality) {
+              ThemePersonality.prayag => 26,
+              ThemePersonality.sagar => 0,
+              ThemePersonality.vaibhav => 14,
+              ThemePersonality.shivli => 24,
+              ThemePersonality.monga => 18,
+              ThemePersonality.defaultSpotify => 0,
+            },
             color: colors.navBackground,
+            border: Border(
+              top: BorderSide(
+                color: colors.glassOutline,
+                width: colors.personality == ThemePersonality.sagar ? 1.2 : 1,
+              ),
+            ),
             child: BottomNavigationBar(
               currentIndex: _index,
               onTap: (i) => setState(() => _index = i),

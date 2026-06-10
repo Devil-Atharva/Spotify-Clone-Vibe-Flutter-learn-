@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+enum ThemePersonality { defaultSpotify, prayag, sagar, vaibhav, shivli, monga }
+
 /// Default Spotify-style colors kept for compatibility with existing imports.
 class AppColors {
   AppColors._();
@@ -22,6 +24,7 @@ class AppColors {
 
 @immutable
 class AppThemeColors extends ThemeExtension<AppThemeColors> {
+  final ThemePersonality personality;
   final Color primary;
   final Color background;
   final Color navBackground;
@@ -49,6 +52,7 @@ class AppThemeColors extends ThemeExtension<AppThemeColors> {
   final Brightness navigationBarIconBrightness;
 
   const AppThemeColors({
+    this.personality = ThemePersonality.defaultSpotify,
     required this.primary,
     required this.background,
     required this.navBackground,
@@ -82,6 +86,7 @@ class AppThemeColors extends ThemeExtension<AppThemeColors> {
 
   @override
   AppThemeColors copyWith({
+    ThemePersonality? personality,
     Color? primary,
     Color? background,
     Color? navBackground,
@@ -109,6 +114,7 @@ class AppThemeColors extends ThemeExtension<AppThemeColors> {
     Brightness? navigationBarIconBrightness,
   }) {
     return AppThemeColors(
+      personality: personality ?? this.personality,
       primary: primary ?? this.primary,
       background: background ?? this.background,
       navBackground: navBackground ?? this.navBackground,
@@ -146,6 +152,7 @@ class AppThemeColors extends ThemeExtension<AppThemeColors> {
   AppThemeColors lerp(ThemeExtension<AppThemeColors>? other, double t) {
     if (other is! AppThemeColors) return this;
     return AppThemeColors(
+      personality: t < 0.5 ? personality : other.personality,
       primary: Color.lerp(primary, other.primary, t)!,
       background: Color.lerp(background, other.background, t)!,
       navBackground: Color.lerp(navBackground, other.navBackground, t)!,
@@ -249,6 +256,7 @@ class AppTheme {
   static const String defaultThemeId = 'default_spotify';
 
   static const AppThemeColors _defaultColors = AppThemeColors(
+    personality: ThemePersonality.defaultSpotify,
     primary: AppColors.spotifyGreen,
     background: AppColors.black,
     navBackground: AppColors.almostBlack,
@@ -276,6 +284,7 @@ class AppTheme {
       id: 'prayag',
       name: 'Prayag Theme',
       colors: AppThemeColors(
+        personality: ThemePersonality.prayag,
         primary: Color(0xFF2F80ED),
         background: Color(0xFFEAF6FF),
         navBackground: Color(0xCCFFFFFF),
@@ -292,12 +301,12 @@ class AppTheme {
         nowPlayingGradient: [Color(0x66FFFFFF), Color(0x552F80ED)],
         likedSongsGradient: [Color(0xDD2F80ED), Color(0xCCB9E7FF)],
         progressGradient: [Color(0xFF3D8BFF), Color(0xFF72F1FF)],
-        wallpaperAsset: 'assets/images/prayag_wallpaper.png',
-        wallpaperOverlay: Color(0x88F6FBFF),
-        wallpaperBlurSigma: 2,
+        wallpaperAsset: 'assets/wallpapers/prayag.jpg',
+        wallpaperOverlay: Color(0x66EDF8FF),
+        wallpaperBlurSigma: 3,
         glassBlurSigma: 18,
         glassColor: Color(0xAAFFFFFF),
-        glassBorder: Color(0x66FFFFFF),
+        glassBorder: Color(0x88FFFFFF),
         systemOverlayIconBrightness: Brightness.dark,
         statusBarBrightness: Brightness.light,
         navigationBarIconBrightness: Brightness.dark,
@@ -307,27 +316,28 @@ class AppTheme {
       id: 'sagar',
       name: 'Sagar Theme',
       colors: AppThemeColors(
-        primary: Color(0xFF6AE8FF),
+        personality: ThemePersonality.sagar,
+        primary: Color(0xFFC6CCD7),
         background: Color(0xFF06070A),
-        navBackground: Color(0xCC0B0E14),
-        card: Color(0x22162231),
-        elevated: Color(0x331D2A3A),
-        text: Color(0xFFF4FAFF),
-        mutedText: Color(0xFF9FB2C7),
-        searchFieldBackground: Color(0xE8F3F8FF),
+        navBackground: Color(0xF20B0C10),
+        card: Color(0xE6141519),
+        elevated: Color(0xF01A1C21),
+        text: Color(0xFFF5F5F3),
+        mutedText: Color(0xFF9A9EA8),
+        searchFieldBackground: Color(0xFFF1F2F4),
         searchFieldText: Color(0xFF06101B),
-        playerButtonBackground: Color(0xFFF2FBFF),
+        playerButtonBackground: Color(0xFFC6CCD7),
         playerButtonForeground: Color(0xFF06101B),
-        progressTrack: Color(0x332E425C),
-        headerGradient: [Color(0xFF0D1622), Color(0xFF06070A)],
-        nowPlayingGradient: [Color(0xFF122238), Color(0xFF06070A)],
-        likedSongsGradient: [Color(0xFF143F63), Color(0xFF57B7FF)],
-        wallpaperAsset: 'assets/images/sagar_wallpaper.png',
-        wallpaperOverlay: Color(0xB3070A10),
-        wallpaperBlurSigma: 2,
-        glassBlurSigma: 22,
-        glassColor: Color(0x1AFFFFFF),
-        glassBorder: Color(0x26DDF5FF),
+        progressTrack: Color(0x33585F6B),
+        headerGradient: [Color(0xD8090A0E), Color(0xFF06070A)],
+        nowPlayingGradient: [Color(0xE013151A), Color(0xFF06070A)],
+        likedSongsGradient: [Color(0xFF6D7480), Color(0xFFC8CDD4)],
+        wallpaperAsset: 'assets/wallpapers/sagar.jpg',
+        wallpaperOverlay: Color(0xCC040507),
+        wallpaperBlurSigma: 0,
+        glassBlurSigma: 4,
+        glassColor: Color(0xE6101115),
+        glassBorder: Color(0x44E1E6ED),
         systemOverlayIconBrightness: Brightness.light,
         statusBarBrightness: Brightness.dark,
         navigationBarIconBrightness: Brightness.light,
@@ -337,6 +347,7 @@ class AppTheme {
       id: 'vaibhav',
       name: 'Vaibhav Theme',
       colors: AppThemeColors(
+        personality: ThemePersonality.vaibhav,
         primary: Color(0xFFFFC857),
         background: Color(0xFF0B1324),
         navBackground: Color(0xCC0E172C),
@@ -360,12 +371,12 @@ class AppTheme {
           Color(0xFF4DC4FF),
           Color(0xFF8C6BFF),
         ],
-        wallpaperAsset: 'assets/images/vaibhav_wallpaper.png',
-        wallpaperOverlay: Color(0x80253A57),
-        wallpaperBlurSigma: 2,
-        glassBlurSigma: 20,
-        glassColor: Color(0x18FFFFFF),
-        glassBorder: Color(0x28FFE7AA),
+        wallpaperAsset: 'assets/wallpapers/vaibhav.jpg',
+        wallpaperOverlay: Color(0x7F091425),
+        wallpaperBlurSigma: 1,
+        glassBlurSigma: 8,
+        glassColor: Color(0xCC0E1722),
+        glassBorder: Color(0x66A5D7FF),
         systemOverlayIconBrightness: Brightness.light,
         statusBarBrightness: Brightness.dark,
         navigationBarIconBrightness: Brightness.light,
@@ -375,6 +386,7 @@ class AppTheme {
       id: 'shivli',
       name: 'Shivli Theme',
       colors: AppThemeColors(
+        personality: ThemePersonality.shivli,
         primary: Color(0xFF7FE36B),
         background: Color(0xFF07110A),
         navBackground: Color(0xCC09160D),
@@ -390,12 +402,12 @@ class AppTheme {
         headerGradient: [Color(0xFF203A26), Color(0xFF07110A)],
         nowPlayingGradient: [Color(0xFF2D5232), Color(0xFF07110A)],
         likedSongsGradient: [Color(0xFF3E8D3D), Color(0xFFA8F06B)],
-        wallpaperAsset: 'assets/images/shivli_wallpaper.png',
-        wallpaperOverlay: Color(0xAA08130B),
-        wallpaperBlurSigma: 3,
-        glassBlurSigma: 18,
-        glassColor: Color(0x1A0D1F11),
-        glassBorder: Color(0x2C8DEB8A),
+        wallpaperAsset: 'assets/wallpapers/shivli.jpg',
+        wallpaperOverlay: Color(0xA60B160E),
+        wallpaperBlurSigma: 2,
+        glassBlurSigma: 10,
+        glassColor: Color(0xC6142518),
+        glassBorder: Color(0x337FE36B),
         systemOverlayIconBrightness: Brightness.light,
         statusBarBrightness: Brightness.dark,
         navigationBarIconBrightness: Brightness.light,
@@ -405,6 +417,7 @@ class AppTheme {
       id: 'monga',
       name: 'Monga Theme',
       colors: AppThemeColors(
+        personality: ThemePersonality.monga,
         primary: Color(0xFFFF3FD8),
         background: Color(0xFF08050D),
         navBackground: Color(0xCC12051A),
@@ -420,12 +433,13 @@ class AppTheme {
         headerGradient: [Color(0xFF2A0833), Color(0xFF08050D)],
         nowPlayingGradient: [Color(0xFF3A0F47), Color(0xFF08050D)],
         likedSongsGradient: [Color(0xFFFF3FD8), Color(0xFF6BFFEA)],
-        wallpaperAsset: 'assets/images/monga_wallpaper.png',
-        wallpaperOverlay: Color(0x8A1A0823),
-        wallpaperBlurSigma: 2,
-        glassBlurSigma: 18,
-        glassColor: Color(0x1AEAE1FF),
-        glassBorder: Color(0x33FF8AF3),
+        progressGradient: [Color(0xFFFF3FD8), Color(0xFFFF8A00), Color(0xFF6BFFEA)],
+        wallpaperAsset: 'assets/wallpapers/monga.jpg',
+        wallpaperOverlay: Color(0x7A120315),
+        wallpaperBlurSigma: 1,
+        glassBlurSigma: 12,
+        glassColor: Color(0xCC250E2E),
+        glassBorder: Color(0x55FF8AF3),
         systemOverlayIconBrightness: Brightness.light,
         statusBarBrightness: Brightness.dark,
         navigationBarIconBrightness: Brightness.light,
@@ -446,9 +460,24 @@ class AppTheme {
 
   static ThemeData build(AppThemeColors colors) {
     final base = ThemeData.dark(useMaterial3: true);
-    final textTheme = GoogleFonts.montserratTextTheme(
-      base.textTheme,
-    ).apply(bodyColor: colors.text, displayColor: colors.text);
+    final textTheme = _textThemeFor(colors, base.textTheme).apply(
+      bodyColor: colors.text,
+      displayColor: colors.text,
+    );
+    final inputRadius = switch (colors.personality) {
+      ThemePersonality.prayag => 20.0,
+      ThemePersonality.sagar => 10.0,
+      ThemePersonality.vaibhav => 12.0,
+      ThemePersonality.shivli => 22.0,
+      ThemePersonality.monga => 18.0,
+      ThemePersonality.defaultSpotify => 14.0,
+    };
+    final sliderTrackHeight = switch (colors.personality) {
+      ThemePersonality.vaibhav => 6.0,
+      ThemePersonality.monga => 5.0,
+      ThemePersonality.sagar => 3.0,
+      _ => 4.0,
+    };
 
     return base.copyWith(
       scaffoldBackgroundColor: colors.hasWallpaper
@@ -486,25 +515,26 @@ class AppTheme {
         prefixIconColor: colors.searchFieldText,
         suffixIconColor: colors.searchFieldText,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(inputRadius),
           borderSide: BorderSide.none,
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(inputRadius),
           borderSide: BorderSide.none,
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(inputRadius),
           borderSide: BorderSide(color: colors.glassOutline),
         ),
       ),
       sliderTheme: SliderThemeData(
-        trackHeight: 4,
+        trackHeight: sliderTrackHeight,
         activeTrackColor: colors.text,
         inactiveTrackColor: colors.progressTrack,
         thumbColor: colors.text,
         overlayShape: SliderComponentShape.noOverlay,
         thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
+        trackShape: ThemeGradientSliderTrackShape(colors: colors),
       ),
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
         backgroundColor: colors.navBackground,
@@ -513,6 +543,80 @@ class AppTheme {
         type: BottomNavigationBarType.fixed,
         showUnselectedLabels: true,
       ),
+    );
+  }
+
+  static TextTheme _textThemeFor(AppThemeColors colors, TextTheme base) {
+    return switch (colors.personality) {
+      ThemePersonality.prayag => GoogleFonts.plusJakartaSansTextTheme(base),
+      ThemePersonality.sagar => GoogleFonts.dmSansTextTheme(base),
+      ThemePersonality.vaibhav => GoogleFonts.spaceGroteskTextTheme(base),
+      ThemePersonality.shivli => GoogleFonts.nunitoTextTheme(base),
+      ThemePersonality.monga => GoogleFonts.lexendTextTheme(base),
+      ThemePersonality.defaultSpotify => GoogleFonts.montserratTextTheme(base),
+    };
+  }
+}
+
+class ThemeGradientSliderTrackShape extends RoundedRectSliderTrackShape {
+  final AppThemeColors colors;
+
+  const ThemeGradientSliderTrackShape({required this.colors});
+
+  @override
+  void paint(
+    PaintingContext context,
+    Offset offset, {
+    double additionalActiveTrackHeight = 2,
+    required RenderBox parentBox,
+    required SliderThemeData sliderTheme,
+    required Animation<double> enableAnimation,
+    required Offset thumbCenter,
+    Offset? secondaryOffset,
+    bool isEnabled = false,
+    bool isDiscrete = false,
+    required TextDirection textDirection,
+  }) {
+    if (sliderTheme.trackHeight == null || sliderTheme.trackHeight! <= 0) {
+      return;
+    }
+
+    final trackRect = getPreferredRect(
+      parentBox: parentBox,
+      offset: offset,
+      sliderTheme: sliderTheme,
+      isEnabled: isEnabled,
+      isDiscrete: isDiscrete,
+    );
+    final radius = Radius.circular(trackRect.height / 2);
+    final activeRect = Rect.fromLTRB(
+      textDirection == TextDirection.ltr ? trackRect.left : thumbCenter.dx,
+      trackRect.top,
+      textDirection == TextDirection.ltr ? thumbCenter.dx : trackRect.right,
+      trackRect.bottom,
+    );
+
+    final inactivePaint = Paint()..color = colors.progressTrack;
+    context.canvas.drawRRect(
+      RRect.fromRectAndRadius(trackRect, radius),
+      inactivePaint,
+    );
+
+    if (activeRect.width <= 0) return;
+
+    final activePaint = Paint();
+    final gradient = colors.progressGradient;
+    if (gradient != null && gradient.length > 1) {
+      activePaint.shader = LinearGradient(colors: gradient).createShader(
+        activeRect,
+      );
+    } else {
+      activePaint.color = sliderTheme.activeTrackColor ?? colors.text;
+    }
+
+    context.canvas.drawRRect(
+      RRect.fromRectAndRadius(activeRect, radius),
+      activePaint,
     );
   }
 }

@@ -56,6 +56,8 @@ class AppGlassContainer extends StatelessWidget {
   final EdgeInsetsGeometry? margin;
   final Color? color;
   final Border? border;
+  final List<BoxShadow>? shadows;
+  final Gradient? gradient;
 
   const AppGlassContainer({
     super.key,
@@ -65,6 +67,8 @@ class AppGlassContainer extends StatelessWidget {
     this.margin,
     this.color,
     this.border,
+    this.shadows,
+    this.gradient,
   });
 
   @override
@@ -75,8 +79,10 @@ class AppGlassContainer extends StatelessWidget {
     final surface = DecoratedBox(
       decoration: BoxDecoration(
         color: color ?? colors.glassSurface,
+        gradient: gradient,
         borderRadius: borderRadius,
         border: border ?? Border.all(color: colors.glassOutline),
+        boxShadow: shadows,
       ),
       child: Padding(padding: padding ?? EdgeInsets.zero, child: child),
     );

@@ -18,8 +18,10 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen>
+    with SingleTickerProviderStateMixin {
   final MusicApi _api = MusicApi();
+  late final AnimationController _atmosphere;
 
   // Each section is a (title, search-term) pair.
   static const _sections = <(String, String)>[
@@ -37,6 +39,10 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _future = _loadAll();
+    _atmosphere = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 16),
+    )..repeat(reverse: true);
   }
 
   Future<List<(String, List<Song>)>> _loadAll() async {
@@ -60,6 +66,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void dispose() {
+    _atmosphere.dispose();
     _api.dispose();
     super.dispose();
   }
@@ -84,42 +91,88 @@ class _HomeScreenState extends State<HomeScreen> {
           stops: [0.0, 0.35],
         ),
       ),
-      child: SafeArea(
-        bottom: false,
-        child: RefreshIndicator(
-          color: colors.primary,
-          backgroundColor: colors.card,
-          onRefresh: _refresh,
-          child: FutureBuilder<List<(String, List<Song>)>>(
-            future: _future,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(
-                  child: CircularProgressIndicator(color: colors.primary),
-                );
-              }
-              if (snapshot.hasError) {
-                return _errorView(context);
-              }
-              final sections = snapshot.data ?? [];
-              if (sections.isEmpty) {
-                return _errorView(context);
-              }
-              return ListView(
-                padding: const EdgeInsets.only(bottom: 24),
-                children: [
-                  _header(context),
-                  _recentlyPlayed(),
-                  ...sections.map(
-                    (s) => _CarouselSection(title: s.$1, songs: s.$2),
-                  ),
-                ],
-              );
-            },
+      child: Stack(
+        children: [
+          _ThemeAtmosphere(animation: _atmosphere),
+          SafeArea(
+            bottom: false,
+            child: RefreshIndicator(
+              color: colors.primary,
+              backgroundColor: colors.card,
+              onRefresh: _refresh,
+              child: FutureBuilder<List<(String, List<Song>)>>(
+                future: _future,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(
+                      child: CircularProgressIndicator(color: colors.primary),
+                    );
+                  }
+                  if (snapshot.hasError) {
+                    return _errorView(context);
+                  }
+                  final sections = snapshot.data ?? [];
+                  if (sections.isEmpty) {
+                    return _errorView(context);
+                  }
+                  return ListView(
+                    padding: const EdgeInsets.only(bottom: 24),
+                    children: [
+                      _header(context),
+                      _recentlyPlayed(),
+                      ...sections.map(
+                        (s) => _CarouselSection(title: s.$1, songs: s.$2),
+                      ),
+                    ],
+                  );
+                },
+              ),
+            ),
           ),
-        ),
+        ],
       ),
     );
+  }
+
+  List<BoxShadow> _headerShadows(AppThemeColors colors) {
+    return switch (colors.personality) {
+      ThemePersonality.prayag => [
+        BoxShadow(
+          color: colors.primary.withAlpha(32),
+          blurRadius: 26,
+          offset: const Offset(0, 12),
+        ),
+      ],
+      ThemePersonality.sagar => const [
+        BoxShadow(
+          color: Color(0x66000000),
+          blurRadius: 18,
+          offset: Offset(0, 10),
+        ),
+      ],
+      ThemePersonality.vaibhav => [
+        BoxShadow(
+          color: const Color(0xFF4DC4FF).withAlpha(30),
+          blurRadius: 20,
+          offset: const Offset(0, 8),
+        ),
+      ],
+      ThemePersonality.shivli => [
+        BoxShadow(
+          color: const Color(0xFF7FE36B).withAlpha(24),
+          blurRadius: 24,
+          offset: const Offset(0, 10),
+        ),
+      ],
+      ThemePersonality.monga => [
+        BoxShadow(
+          color: const Color(0xFFFF3FD8).withAlpha(40),
+          blurRadius: 28,
+          offset: const Offset(0, 10),
+        ),
+      ],
+      ThemePersonality.defaultSpotify => const [],
+    };
   }
 
   Widget _errorView(BuildContext context) {
@@ -154,8 +207,15 @@ class _HomeScreenState extends State<HomeScreen> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
       child: AppGlassContainer(
-        radius: 24,
+        radius: switch (colors.personality) {
+          ThemePersonality.sagar => 12,
+          ThemePersonality.vaibhav => 14,
+          ThemePersonality.shivli => 26,
+          ThemePersonality.monga => 18,
+          _ => 24,
+        },
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+        shadows: _headerShadows(colors),
         child: Row(
           children: [
             Text(
@@ -213,19 +273,46 @@ class _RecentChip extends StatelessWidget {
     final colors = context.appColors;
 
     return AppGlassContainer(
-      radius: 4,
+      radius: switch (colors.personality) {
+        ThemePersonality.prayag => 16,
+        ThemePersonality.sagar => 8,
+        ThemePersonality.vaibhav => 10,
+        ThemePersonality.shivli => 20,
+        ThemePersonality.monga => 14,
+        ThemePersonality.defaultSpotify => 4,
+      },
       color: colors.elevated,
       child: Material(
         type: MaterialType.transparency,
         child: InkWell(
-          borderRadius: BorderRadius.circular(4),
+          borderRadius: BorderRadius.circular(
+            switch (colors.personality) {
+              ThemePersonality.prayag => 16,
+              ThemePersonality.sagar => 8,
+              ThemePersonality.vaibhav => 10,
+              ThemePersonality.shivli => 20,
+              ThemePersonality.monga => 14,
+              ThemePersonality.defaultSpotify => 4,
+            },
+          ),
           onTap: () {
             context.read<PlayerProvider>().playSong(song, queue: queue);
             context.read<LibraryProvider>().addRecent(song);
           },
           child: Row(
             children: [
-              Artwork(url: song.artworkUrl, size: 48, radius: 4),
+              Artwork(
+                url: song.artworkUrl,
+                size: 48,
+                radius: switch (colors.personality) {
+                  ThemePersonality.prayag => 12,
+                  ThemePersonality.sagar => 4,
+                  ThemePersonality.vaibhav => 6,
+                  ThemePersonality.shivli => 14,
+                  ThemePersonality.monga => 10,
+                  ThemePersonality.defaultSpotify => 4,
+                },
+              ),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
@@ -234,7 +321,7 @@ class _RecentChip extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
                     fontSize: 12,
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
               ),
@@ -298,13 +385,82 @@ class _AlbumCard extends StatelessWidget {
       child: SizedBox(
         width: 150,
         child: AppGlassContainer(
-          radius: 20,
+          radius: switch (colors.personality) {
+            ThemePersonality.prayag => 26,
+            ThemePersonality.sagar => 10,
+            ThemePersonality.vaibhav => 12,
+            ThemePersonality.shivli => 28,
+            ThemePersonality.monga => 18,
+            ThemePersonality.defaultSpotify => 20,
+          },
           margin: const EdgeInsets.symmetric(horizontal: 4),
           padding: const EdgeInsets.all(8),
+          gradient: switch (colors.personality) {
+            ThemePersonality.vaibhav => LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [colors.card, colors.elevated],
+            ),
+            ThemePersonality.monga => LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [colors.card, colors.primary.withAlpha(70)],
+            ),
+            _ => null,
+          },
+          shadows: switch (colors.personality) {
+            ThemePersonality.prayag => [
+              BoxShadow(
+                color: colors.primary.withAlpha(26),
+                blurRadius: 20,
+                offset: const Offset(0, 10),
+              ),
+            ],
+            ThemePersonality.sagar => const [
+              BoxShadow(
+                color: Color(0x88000000),
+                blurRadius: 16,
+                offset: Offset(0, 10),
+              ),
+            ],
+            ThemePersonality.vaibhav => [
+              BoxShadow(
+                color: const Color(0xFF4DC4FF).withAlpha(20),
+                blurRadius: 16,
+                offset: const Offset(0, 8),
+              ),
+            ],
+            ThemePersonality.shivli => [
+              BoxShadow(
+                color: const Color(0xFF7FE36B).withAlpha(18),
+                blurRadius: 18,
+                offset: const Offset(0, 8),
+              ),
+            ],
+            ThemePersonality.monga => [
+              BoxShadow(
+                color: colors.primary.withAlpha(34),
+                blurRadius: 24,
+                offset: const Offset(0, 10),
+              ),
+            ],
+            ThemePersonality.defaultSpotify => null,
+          },
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Artwork(url: song.artworkHighRes(300), size: 140, radius: 8),
+              Artwork(
+                url: song.artworkHighRes(300),
+                size: 140,
+                radius: switch (colors.personality) {
+                  ThemePersonality.prayag => 18,
+                  ThemePersonality.sagar => 6,
+                  ThemePersonality.vaibhav => 8,
+                  ThemePersonality.shivli => 22,
+                  ThemePersonality.monga => 12,
+                  ThemePersonality.defaultSpotify => 8,
+                },
+              ),
               const SizedBox(height: 6),
               Text(
                 song.title,
@@ -324,6 +480,67 @@ class _AlbumCard extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _ThemeAtmosphere extends StatelessWidget {
+  final Animation<double> animation;
+
+  const _ThemeAtmosphere({required this.animation});
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.appColors;
+    if (colors.personality != ThemePersonality.shivli) {
+      return const SizedBox.shrink();
+    }
+
+    return IgnorePointer(
+      child: AnimatedBuilder(
+        animation: animation,
+        builder: (context, _) {
+          final t = animation.value;
+          return Stack(
+            children: [
+              Positioned(
+                left: -80 + (40 * t),
+                top: 120,
+                child: const _FogBlob(
+                  size: 220,
+                  color: Color(0x338FDFA7),
+                ),
+              ),
+              Positioned(
+                right: -60 + (30 * (1 - t)),
+                top: 320,
+                child: const _FogBlob(
+                  size: 180,
+                  color: Color(0x22F4FFF0),
+                ),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _FogBlob extends StatelessWidget {
+  final double size;
+  final Color color;
+
+  const _FogBlob({required this.size, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        gradient: RadialGradient(colors: [color, Colors.transparent]),
       ),
     );
   }

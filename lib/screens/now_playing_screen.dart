@@ -50,12 +50,26 @@ class NowPlayingScreen extends StatelessWidget {
                   child: Artwork(
                     url: song.artworkHighRes(),
                     size: MediaQuery.of(context).size.width - 48,
-                    radius: 10,
+                    radius: switch (colors.personality) {
+                      ThemePersonality.prayag => 24,
+                      ThemePersonality.sagar => 8,
+                      ThemePersonality.vaibhav => 10,
+                      ThemePersonality.shivli => 26,
+                      ThemePersonality.monga => 14,
+                      ThemePersonality.defaultSpotify => 10,
+                    },
                   ),
                 ),
                 const Spacer(),
                 AppGlassContainer(
-                  radius: 28,
+                  radius: switch (colors.personality) {
+                    ThemePersonality.prayag => 30,
+                    ThemePersonality.sagar => 12,
+                    ThemePersonality.vaibhav => 14,
+                    ThemePersonality.shivli => 30,
+                    ThemePersonality.monga => 20,
+                    ThemePersonality.defaultSpotify => 28,
+                  },
                   padding: const EdgeInsets.symmetric(
                     horizontal: 18,
                     vertical: 16,
@@ -155,7 +169,14 @@ class NowPlayingScreen extends StatelessWidget {
     final total = player.duration;
     final pos = player.position > total ? total : player.position;
     return AppGlassContainer(
-      radius: 24,
+      radius: switch (colors.personality) {
+        ThemePersonality.prayag => 26,
+        ThemePersonality.sagar => 12,
+        ThemePersonality.vaibhav => 14,
+        ThemePersonality.shivli => 28,
+        ThemePersonality.monga => 18,
+        ThemePersonality.defaultSpotify => 24,
+      },
       padding: const EdgeInsets.fromLTRB(8, 8, 8, 12),
       child: Column(
         children: [
@@ -196,8 +217,28 @@ class NowPlayingScreen extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(top: 8),
       child: AppGlassContainer(
-        radius: 28,
+        radius: switch (colors.personality) {
+          ThemePersonality.prayag => 30,
+          ThemePersonality.sagar => 12,
+          ThemePersonality.vaibhav => 14,
+          ThemePersonality.shivli => 30,
+          ThemePersonality.monga => 20,
+          ThemePersonality.defaultSpotify => 28,
+        },
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+        gradient: switch (colors.personality) {
+          ThemePersonality.monga => LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [colors.card, colors.primary.withAlpha(90)],
+          ),
+          ThemePersonality.vaibhav => LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [colors.card, colors.elevated],
+          ),
+          _ => null,
+        },
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -222,11 +263,33 @@ class NowPlayingScreen extends StatelessWidget {
                 height: 68,
                 decoration: BoxDecoration(
                   color: colors.playerButtonBackground,
-                  shape: BoxShape.circle,
+                  borderRadius: BorderRadius.circular(
+                    switch (colors.personality) {
+                      ThemePersonality.prayag => 34,
+                      ThemePersonality.sagar => 14,
+                      ThemePersonality.vaibhav => 20,
+                      ThemePersonality.shivli => 28,
+                      ThemePersonality.monga => 24,
+                      ThemePersonality.defaultSpotify => 34,
+                    },
+                  ),
+                  gradient: switch (colors.personality) {
+                    ThemePersonality.monga => LinearGradient(
+                      colors: [colors.playerButtonBackground, colors.primary],
+                    ),
+                    ThemePersonality.vaibhav => const LinearGradient(
+                      colors: [Color(0xFFFFFBF3), Color(0xFFFFE08A)],
+                    ),
+                    _ => null,
+                  },
                   boxShadow: [
                     BoxShadow(
-                      color: colors.primary.withAlpha(70),
-                      blurRadius: 24,
+                      color: colors.primary.withAlpha(
+                        colors.personality == ThemePersonality.sagar ? 24 : 70,
+                      ),
+                      blurRadius: colors.personality == ThemePersonality.sagar
+                          ? 10
+                          : 24,
                       offset: const Offset(0, 8),
                     ),
                   ],
